@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Home</title>
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+<script src="/js/jquery.min.js"></script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css" />
+ <script type="text/javascript">
+ $(function () {
+     $('#datetimepicker4').datetimepicker({
+         format: 'L'
+     });
+ });
+ $(function () {
+     $('#datetimepicker5').datetimepicker({
+         format: 'L'
+     });
+ });
+ 
+ function myFunc(){
+	   
+	   var x = document.getElementById("butVal");
+	    x.innerHTML="Please wait..";
+	
+		var frmDate=$('#frmDate').val();
+		var toDate=$('#toDate').val();
+		
+		if(isDate(frmDate) && isDate(toDate))
+			{
+ 			
+			frmDate=formatDate(frmDate);
+			toDate=formatDate(toDate);
+			
+			 var fr = new Date(frmDate);
+			 var to = new Date(toDate);
+			 
+			 if(to>fr)
+				 {
+				 
+			
+		var URLGet="api/v1/claim/fromDate/"+frmDate+"/toDate/"+toDate;
+	
+		  $.ajax({ cache: false,
+		        url: URLGet,
+		        success: function (data) {
+		        	if(data>0)
+		        		{
+		        	 document.getElementById("val").innerHTML=data;
+				      x.innerHTML="Calculate";
+		        		}
+		        	else
+		        		{
+		        		alert("No Data found for this Date Range");
+			        	 x.innerHTML="Calculate";
+		        		}
+		        },
+		        error:function (xhr, ajaxOptions, thrownError){
+		        	alert("No Data found for this Date Range");
+		        	 x.innerHTML="Calculate";
+		        }
+		    });
+				 }
+			 else
+				 {
+				 
+				 alert("From date should be less than To date");
+				 x.innerHTML="Calculate";
+				 return;
+				 
+				 }
+			}
+		else
+			{
+			alert("Please enter a valid date");
+			x.innerHTML="Calculate";
+			}
+	}
+ function formatDate(date)
+ {
+	 var d = new Date(date);
+	 var n = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
+	 return n;
+ }
+ function isDate(txtDate)
+ {
+   var currVal = txtDate;
+   if(currVal == '')
+     return false;
+   
+   //Declare Regex  
+   var rxDatePattern = /^(\d{1,2})(\/|-)(\d{1,2})(\/|-)(\d{4})$/; 
+   var dtArray = currVal.match(rxDatePattern); // is format OK?
+
+   if (dtArray == null)
+      return false;
+  
+   //Checks for mm/dd/yyyy format.
+   dtMonth = dtArray[1];
+   dtDay= dtArray[3];
+   dtYear = dtArray[5];
+
+   if (dtMonth < 1 || dtMonth > 12)
+       return false;
+   else if (dtDay < 1 || dtDay> 31)
+       return false;
+   else if ((dtMonth==4 || dtMonth==6 || dtMonth==9 || dtMonth==11) && dtDay ==31)
+       return false;
+   else if (dtMonth == 2)
+   {
+      var isleap = (dtYear % 4 == 0 && (dtYear % 100 != 0 || dtYear % 400 == 0));
+      if (dtDay> 29 || (dtDay ==29 && !isleap))
+           return false;
+   }
+   return true;
+ }
+        </script>
+    
+</head>
+<body>
+<div class="container-fluid">
+<div class="row"></div><br><div class="row"><br></div><div class="row"><br></div>
+<div class="row">
+    <div class="col-sm-3" >
+    <label for="FromDate">From Date:</label>
+  <div class="form-group">
+                <div class="input-group date" id="datetimepicker4" data-target-input="nearest">
+                    <input type="text" id="frmDate" class="form-control datetimepicker-input" data-target="#datetimepicker4"/>
+                    <div class="input-group-append" data-target="#datetimepicker4" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                    </div>
+                </div>
+            </div>
+    </div>
+    <div class="col-sm-3" >
+  <label for="toDate">To Date:</label>
+   <div class="form-group">
+                <div class="input-group date" id="datetimepicker5" data-target-input="nearest">
+                    <input type="text" id="toDate" class="form-control datetimepicker-input" data-target="#datetimepicker5"/>
+                    <div class="input-group-append" data-target="#datetimepicker5" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                    </div>
+                </div>
+            </div>
+    </div>
+    
+      <div class="col-sm-3" >
+    <br> <a href="#" onclick="myFunc();" class="btn btn-primary btn-lg active" role="button" aria-pressed="true"><div id="butVal">Calculate</div></a>
+  
+    </div>
+  </div><div class="row"></div><br><div class="row"><br></div>
+  <div  class="row"><div class="col-sm-3" ></div><div class="col-sm-3" >
+    <button type="button" class="btn btn-success btn-lg"><div id="val">0.00</div></button>
+  </div>
+  </div>
+</div>
+</body>
+</html>

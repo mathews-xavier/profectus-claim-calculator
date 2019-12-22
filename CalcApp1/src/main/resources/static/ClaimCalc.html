@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Home</title>
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+<script src="/js/jquery.min.js"></script>
+<script src="/js/popper.min.js"></script>
+
+<script src="/js/bootstrap.min.js"></script>
+<script>
+function myFunc(){
+	
+    var x = document.getElementById("butVal");
+   
+    x.innerHTML="Please wait..";
+    
+    if( !$('#prodCode').val() && !$('#percent').val() ) { 
+    	 x.innerHTML="Calculate";
+        alert("Please enter the required fields");    
+   }
+    else {
+	var prodCode=$('#prodCode').val();
+	var URLGet="api/v1/product/"+prodCode;
+	
+    $.ajax({ cache: false,
+        url: URLGet,
+        success: function (data) {
+        	var perentage=document.getElementById("percent").value;
+  	      var amount=data.purchaseAmount;
+  	      amount=amount*(perentage/100);
+  	      document.getElementById("val").innerHTML=amount;
+  	      x.innerHTML="Calculate";
+        },
+        error:function (xhr, ajaxOptions, thrownError){
+        	alert("No Data found for this Product code");
+        	 x.innerHTML="Calculate";
+        }
+    });
+}
+}
+</script>
+</head>
+<body>
+<div class="container-fluid">
+<div class="row"></div><br><div class="row"><br></div><div class="row"><br></div>
+<div class="row">
+    <div class="col-sm-3" >
+    <label for="prodCode">Product Code</label>
+  <input type="text" class="form-control" id="prodCode">
+    </div>
+    <div class="col-sm-3" >
+  <label for="percent">Percentage</label>
+  <input type="number" class="form-control" id="percent">
+    </div>
+    
+      <div class="col-sm-3" >
+    <br> 
+    <div id="loader"></div> <div id="calButton">
+    <a href="#" onclick="myFunc();" class="btn btn-primary btn-lg active" role="button" aria-pressed="true"><div id="butVal">Calculate</div></a>
+  </div>
+    </div>
+  </div><div class="row"></div><br><div class="row"><br></div>
+  <div  class="row"><div class="col-sm-3" ></div><div class="col-sm-3" >
+    <button type="button"  class="btn btn-success btn-lg"><div id="val">0.00</div></button>
+  </div>
+  </div>
+</div>
+</body>
+</html>
